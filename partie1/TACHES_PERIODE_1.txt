@@ -1,0 +1,13 @@
+
+distribution des taches
+src1.c, src2.c et src3.c : Raphael
+DOC_TECHNIQUE.html       : Mattéo
+DOC_UTILISATEUR.md       : Raphael / Marius / Stanislas
+DOC_UTILISATEUR.html     : Stanislas / Marius / Raphael
+TACHES_PERIODE_1.txt     : Marius
+
+répartition du travail:
+    Raphael  :    37%
+    Mattéo   :    24%
+    Marius   :    24%
+    Stanislas:    23%

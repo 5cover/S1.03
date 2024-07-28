@@ -1,0 +1,11 @@
+distribution des taches:
+ gendoc-user.php        : Raphael / Stanislas
+ gendoc-tech.php        : Mattéo / Marius
+ bash                   : Raphael 
+ TACHES_PERIODE_2.txt   : Marius
+
+répartition du travail:
+    Raphael  :    45%
+    Mattéo   :    20%
+    Marius   :    20%
+    Stanislas:    15%

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+
+<head>
+    <title>Chaine de production</title>
+    <meta charset="utf-8">
+    <style>
+        header {
+            margin: 5px;
+            padding: 10px;
+            border: red 3px solid;
+        }
+
+        article {
+            margin: 5px;
+            padding: 5px;
+            border: black 3px solid;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        th {
+            border: black 5px solid;
+        }
+
+        td {
+            border: #555 3px solid;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        p {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Documentation utilisateur(Chaine de production)</h1>
+        <p><strong>Client</strong>&nbsp;: Max Dephric</p>
+        <p><strong>Nom de produit</strong>&nbsp;: MyMalloc</p>
+        <p><strong>Version</strong>&nbsp;: 1.2.3</p>
+        <p><strong>Date de génération</strong>&nbsp;: 6/12/2023</p>
+    </header>
+    <main>
+        <section>
+            <article>
+                <h2>LES FICHIERS SOURCES</h1>
+                    <p>Exemple d'un des fichiers sources :</p>
+                    <pre>
+                        <code>
+                            uint8_t *createBitmapFileHeader(unsigned height, unsigned stride){
+                                    uint32_t fileSize = FILE_HEADER_SIZE + INFO_HEADER_SIZE + stride * height;
+                                    static uint8_t fileHeader[] = {
+                                        0, 0,       // signature
+                                        0, 0, 0, 0, // image file size in bytes
+                                        0, 0, 0, 0, // reserved
+                                        0, 0, 0, 0, // start of pixel array
+                                    };
+                                    fileHeader[0] = 'B';
+                                    fileHeader[1] = 'M';
+                                    fileHeader[2] = (uint8_t)fileSize;
+                                    fileHeader[3] = (uint8_t)(fileSize >> 8);
+                                    fileHeader[4] = (uint8_t)(fileSize >> 16);
+                                    fileHeader[5] = (uint8_t)(fileSize >> 24);
+                                    fileHeader[10] = FILE_HEADER_SIZE + INFO_HEADER_SIZE;
+                                    return fileHeader;
+                            }
+                        </code>
+                    <pre>
+                </article>
+                <article>
+                    <h2>LA DOCUMENTATION TECHNIQUE</h1>
+                    <p>C'est un document qui explique les fonctionnalités des fichiers sources.</p>
+                    <p>Exemple&nbsp;:</p>
+                    <p>La fonction <code>void generateBitmapImage(uint8_t const *image, uint32_t height, uint32_t width, char const *imageFileName)</code> est expliquée dans la doc technique.</p>
+                </article>
+                <article>
+                    <h2>LA DOCUMENTATION UTILISATEUR</h1>
+                    <p>En Markdown :</p>
+                    <p>En premier lieu la documentation utilisateur doit être faite en Markdown.</p>
+                    <p>En HTML :</p>
+                    <p>C'est la doc utilisateur Markdown convertie HTML. On y retrouve des titres :</p>
+                    <h2>Niveau 2</h2>
+                    <h3>Niveau 3</h3>
+                    <h4>Niveau 4</h4>
+                </article>
+                <article>
+                    <h2>LE RECENSEMENT DES TÂCHES</h2>
+                    <table>
+                        <tr>
+                            <th colspan="2">Distribution des taches</th>
+                        </tr>
+                        <tr>
+                            <th>Livrables</th>
+                            <th>Élève(s)</th>
+                        </tr>
+                        <tr>
+                            <td>src1.c, src2.c et src3.c</td>
+                            <td>Raphaël</td>
+                        </tr>
+                        <tr>
+                            <td>DOC_TECHNIQUE.html</td>
+                            <td>Mattéo</td>
+                        </tr>
+                        <tr>
+                            <td>DOC_UTILISATEUR.md</td>
+                            <td>Raphaël / Stanislas / Marius</td>
+                        </tr>
+                        <tr>
+                            <td>DOC_UTILISATEUR.html</td>
+                            <td>Raphaël / Stanislas / Marius</td>
+                        </tr>
+                        <tr>
+                            <td>TACHES_PERIODE_1.txt</td>
+                            <td>Marius</td>
+                        </tr>
+                    </table>
+                    <p>LA RÉPARTITION DES TÂCHES</p>
+                    <ul>
+                        <li>Raphaël &nbsp;&nbsp;: 38%</li>
+                        <li>Mattéo &nbsp;&nbsp;&nbsp;: 24%</li>
+                        <li>Marius &nbsp;&nbsp;&nbsp;: 23%</li>
+                        <li>Stanislas : 15%</li>
+                    </ul>
+                </article>
+            </section>
+        </main>
+    </body>
+</html>

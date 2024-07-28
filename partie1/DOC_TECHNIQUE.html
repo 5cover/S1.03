@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation technique de MyMalloc">
+    <meta name="author" content="Mattéo Kervadec, Marius Chartier--Le Goff, Raphaël Bardini, Stanislas Rolland">
+    <style>
+        header {
+            margin: 5px;
+            padding: 10px;
+            border: red 3px solid;
+        }
+
+        section {
+            margin: 5px;
+            padding: 5px;
+            border: black 3px solid;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        th {
+            border: black 2.5px solid;
+        }
+
+        td {
+            border: #555 1.5px solid;
+        }
+    </style>
+    <title>Documentation Technique</title>
+</head>
+
+<body>
+    <header>
+        <h1>Documentation technique</h1>
+        <p><strong>Client</strong>&nbsp;: Max Dephric</p>
+        <p><strong>Nom de produit</strong>&nbsp;: MyMalloc</p>
+        <p><strong>Version</strong>&nbsp;: 1.2.3</p>
+        <p><strong>Date de génération</strong>&nbsp;: 5/12/2023</p>
+    </header>
+    <main>
+        <section>
+            <h2>DEFINES</h2>
+            <dl>
+                <dt id="file_max">FILE_MAX 255</dt>
+                <dd>Nombre maximum d'élements de <a href="#t_file">T_FILE</a>.</dd>
+                <dt id="pile_max">PILE_MAX 255</dt>
+                <dd>Nombre maximum d'élements de <a href="#t_pile">T_PILE</a>.</dd>
+            </dl>
+        </section>
+        <section>
+            <h2>STRUCTURES</h2>
+            <dl>
+                <dt id="t_file"><code>t_file</code></dt>
+                <dd>
+                    <p>Liste d'entiers FIFO (<em>first in first out</em>)</p>
+                    <table>
+                        <caption>Composants</caption>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><em>elements</em></td>
+                                <td>Tableau d'entiers de taille <a href="#pile_max">PILE_MAX</td>
+                            </tr>
+                            <tr>
+                                <td><em>nbElements</em></td>
+                                <td>Nombre d'éléments</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </dd>
+                <dt id="t_pile"><code>t_pile</code></dt>
+                <dd>
+                    <p>Liste d'entiers LIFO (<em>last in first out</em>)</p>
+                    <table>
+                        <caption>Composants</caption>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><em>elements</em></td>
+                                <td>Tableau d'entiers de taille <a href="#file_max">FILE_MAX</td>
+                            </tr>
+                            <tr>
+                                <td><em>nbElements</em></td>
+                                <td>Nombre d'éléments</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2>GLOBALES</h2>
+            <dl>
+                <dt><code>int foo</code></dt>
+                <dd>Lorem Ipsum dolor sit amet</dd>
+                <dt><code>int bar</code></dt>
+                <dd>Lorem Ipsum dolor sit amet</dd>
+            </dl>
+        </section>
+        <section>
+            <h2>FONCTIONS</h2>
+            <dl>
+                <dt><code>void generateBitmapImage(uint8_t const *image, uint32_t height, uint32_t width, char const
+                    *imageFileName)</code></dt>
+                <dd>
+                    <p>Génère une image bitmap et l'enregistre dans un fichier.</p>
+                    <table>
+                        <caption>Paramètres</caption>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>uint8_t const *</code></td>
+                                <td><em>image</em></td>
+                                <td>Tableau tridimensionnel contenant la couleur de chaque pixel de l'image</td>
+                            </tr>
+                            <tr>
+                                <td><code>uint32_t</code></td>
+                                <td><em>height</em></td>
+                                <td>Hauteur de l'image en pixels</td>
+                            </tr>
+                            <tr>
+                                <td><code>uint32_t</code></td>
+                                <td><em>width</em></td>
+                                <td>Largeur de l'image en pixels</td>
+                            </tr>
+                            <tr>
+                                <td><code>char const *</code></td>
+                                <td><em>imageFileName</em></td>
+                                <td>Nom du fichier bitmap à créer</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </dd>
+                <dt><code>int maximum(int const *tableau, size_t tailleTableau)</code></dt>
+                <dd>
+                    <p>Retrourne la plus grande valeur d'un tableau d'entiers.</p>
+                    <article>
+                        <p>Un descriptif détaillé de ce que fait la fonction entrant dans les détails de ses
+                            caractéristiques, des conditions particulières d'utilisation, faisant apparaître
+                            éventuellement&nbsp;:</p>
+                        <ul>
+                            <li>un formatage sommaire</li>
+                            <li>sous forme de listes</li>
+                        </ul>
+                        <br>
+                        <p>et de sauts de lignes</p>
+                    </article>
+                    <table>
+                        <caption>Paramètres</caption>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>int const *</code></td>
+                                <td><em>tableau</em></td>
+                                <td>Le tableau dans lequel rechercher le maximum</td>
+                            </tr>
+                            <tr>
+                                <td><code>size_t</code></td>
+                                <td><em>tailleTableau</em></td>
+                                <td>La taille du tableau</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Retour</strong>&nbsp;: <code>int</code> : la plus grande valeur du tableau.</p>
+                </dd>
+            </dl>
+        </section>
+    </main>
+</body>
+
+</html>

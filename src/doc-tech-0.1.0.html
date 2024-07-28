@@ -1,0 +1,671 @@
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation technique de MyMalloc">
+    <meta name="author" content="Mattéo Kervadec, Marius Chartier--Le Goff, Raphaël Bardini, Stanislas Rolland">
+    <style>
+        @page {
+            margin: 1em 0;
+        }
+
+        :root {
+            color: #111;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 18px;
+        }
+        header {
+            break-after: page;
+        }
+        header, main {
+            background: white;
+            max-width: 75ch;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: Helvetica, sans-serif;
+            margin-top: .8em;
+            margin-bottom: .2em;
+            break-after: avoid-page;
+        }
+        h1 {
+            font-size: 2.157em;
+            margin-top: 0;
+            font-weight: 800;
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.882em;
+            font-weight: 500;
+        }
+        h3 {
+            font-size: 1.608em;
+            font-weight: 500;
+        }
+        h4 {
+            font-size: 1.333em;
+            font-weight: 800;
+        }
+
+        p {
+            line-height: calc(1ex / 0.32);
+        }
+
+        ul {
+            padding-left: 1em;
+        }
+        
+        pre {
+            background-color: #f3f6f8;
+            border: .0625em #111 solid;
+            padding: 1em;
+            width: fit-content;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+        }
+        code.inline {
+            background: #e3e6e8;
+            border-radius: .2em;
+            padding: .1em .2em;
+            white-space: pre-wrap;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+        th {
+            border: .125em #111 solid;
+            padding: .2em;
+        }
+        td {
+            border: .0625em #111 solid;
+            padding: .2em;
+        }
+
+        /* Empêcher les éléments pouvant grandir indéfiniment de dépasser le main */
+        table, pre {
+            break-inside: avoid-page;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+            display: block;
+        }
+
+        /* Bordures uniquement sur écran */
+        @media screen {
+            :root {
+                background: #111;
+            }
+
+            header, main {
+                border-radius: 1em;
+                padding: 1em;
+                margin: 1.618em auto;
+            }
+        }
+
+        dt {
+            font-family: 'Courier New', monospace;
+            background: #e3e6e8;
+            margin: 1em 0;
+        }
+    </style>
+    <title>Documentation Technique</title>
+</head>
+
+<body>
+    <header>
+        <h1>Documentation technique</h1>
+                <p><strong>Client</strong>&nbsp;: Max Dephric</p>
+        <p><strong>Produit</strong>&nbsp;: MyMalloc</p>
+        <p><strong>Version</strong>&nbsp;: 0.1.0</p>
+        <p><strong>Date de génération</strong>&nbsp;: <time datetime="2024-01-21">21/01/2024</time></p>
+    </header>
+
+    <main>
+
+                        <section>
+                    <h2>DEFINES</h2>
+                    <dl>
+                         <dt>BYTES_PER_PIXEL 3</dt>
+                            <dd>Entier : nombre d'octets par pixel pour coder sa couleur. 3 pour le codage RVB.  </dd>
+
+
+                         <dt>I_R 2</dt>
+                            <dd>Index du rouge dans le tableau RVB.  </dd>
+
+
+                         <dt>I_G 1</dt>
+                            <dd>Index du vert dans le tableau RVB.  </dd>
+
+
+                         <dt>I_B 0</dt>
+                            <dd>Index du bleu dans le tableau RVB.  </dd>
+
+
+                         <dt>FILE_HEADER_SIZE 14</dt>
+                            <dd>Entier : taille en octets de l'en-tête de fichier du format bitmap.  </dd>
+
+
+                         <dt>INFO_HEADER_SIZE 40</dt>
+                            <dd>Entier : taille en octets de l'en-tête informationnel du format bitmap.  </dd>
+
+
+                         <dt>DUMP_BMP_HEIGHT 8</dt>
+                            <dd>Entier : hauteur en pixels des images crées par les fonctions heapDumpChunksBitmap et heapDumpDataBitmap  </dd>
+
+
+                         <dt>HEAP_SIZE 256</dt>
+                            <dd>Entier : la taille du tas  </dd>
+
+
+                         <dt>HEAP_START_PTR ((intptr_t)gs_pool)</dt>
+                            <dd>Pointeur vers le début du tas  </dd>
+
+
+                         <dt>ALIGN 1</dt>
+                            <dd>Entier : alignement des allocations. Les blocs alloués débuteront à des multiples de cette valeur.  </dd>
+
+
+                                            </dl>
+                </section><section>
+                    <h2>FONCTIONS</h2>
+                    <dl>
+                            <dt><code> void generateBitmapImage(uint8_t const *image, uint32_t height, uint32_t width, char const *imageFileName); </code></dt>
+                            <dd>
+
+                                <p>Génère une image bitmap et l'enregistre dans un fichier.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>uint32_t</td>
+                                                    <td>height</td>
+                                                    <td>Hauteur de l'image en pixels (la première dimension du tableau)</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>uint32_t</td>
+                                                    <td>width</td>
+                                                    <td>Largeur de l'image en pixels (la seconde dimension du tableau)</td>
+                                                </tr>
+                                                                                                </tbody>
+                                            </table>                            </dd>
+                            <dt><code> uint8_t *createBitmapFileHeader(unsigned height, unsigned stride); </code></dt>
+                            <dd>
+
+                                <p>Crée l'en-tête de fichier d'une image bitmap.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>unsigned</td>
+                                                    <td>height</td>
+                                                    <td>La hauteur de l'image</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>unsigned</td>
+                                                    <td>stride</td>
+                                                    <td>Le nombre d'octets dans une ligne de l'image (doit être un multiple de 4)</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: uint8_t* Un tableau représentant l'en-tête de fichier du bitmap.</p>
+                                                                    </dd>
+                            <dt><code> uint8_t *createBitmapInfoHeader(uint32_t height, uint32_t width); </code></dt>
+                            <dd>
+
+                                <p>Crée l'en-tête informationnel d'une image bitmap.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>uint32_t</td>
+                                                    <td>height</td>
+                                                    <td>La hauteur de l'image</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>uint32_t</td>
+                                                    <td>width</td>
+                                                    <td>La largeur de l'image</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: uint8_t* Un tableau représentant l'en-tête informationnel du bitmap.</p>
+                                                                    </dd>
+                            <dt><code> void *myAlloc(size_t size); </code></dt>
+                            <dd>
+
+                                <p>Alloue de la mémoire.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>size_t</td>
+                                                    <td>size</td>
+                                                    <td>Nombre d'octets contigus à allouer</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: void* Pointeur vers le bloc de mémoire alloué, ou NULL si l'allocation a échoué.</p>
+                                                                    </dd>
+                            <dt><code> void myFree(void const *ptr); </code></dt>
+                            <dd>
+
+                                <p>Libère de la mémoire précédemment allouée via myAlloc.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>void</td>
+                                                    <td>ptr</td>
+                                                    <td>Pointeur vers le bloc de mémoire à libérer</td>
+                                                </tr>
+                                                                                                </tbody>
+                                            </table>                            </dd>
+                            <dt><code> void heapDumpChunksConsole(void); </code></dt>
+                            <dd>
+
+                                <p>Affiche dans la console l'état de la mémoire, quels blocs sont allouées, etc... */</p>
+
+                                                                    </dd>
+                            <dt><code> void heapDumpChunksBitmap(char const *filename); </code></dt>
+                            <dd>
+
+                                <p>Crée un fichier bitmap schématisant les blocs actuellement alloués dans la mémoire.</p>
+
+                                                                    </dd>
+                            <dt><code> void heapDumpDataBitmap(char const *filename); </code></dt>
+                            <dd>
+
+                                <p>Crée un fichier bitmap représentant en nuances de gris les données actuellement contenues dans la mémoire.</p>
+
+                                                                    </dd>
+                            <dt><code> bool rangesOverlap(intptr_t x1, intptr_t x2, intptr_t y1, intptr_t y2); </code></dt>
+                            <dd>
+
+                                <p>Détermine si deux intervalles se chevauchent.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>intptr_t</td>
+                                                    <td>x1</td>
+                                                    <td>début de l'intervalle 1</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>intptr_t</td>
+                                                    <td>x2</td>
+                                                    <td>fin de l'intervalle 1</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>intptr_t</td>
+                                                    <td>y1</td>
+                                                    <td>début de l'intervalle 2</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>intptr_t</td>
+                                                    <td>y2</td>
+                                                    <td>fin de l'intervalle</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: bool vrai si les intervalles tel que [x1 ; x2] et [y1 ; y2] se chevauchent, faux sinon.</p>
+                                                                    </dd>
+                            <dt><code> bool isAreaAllocated(intptr_t start, size_t size); </code></dt>
+                            <dd>
+
+                                <p>Détermine si un zone de la mémoire est au moins en partie allouée.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>intptr_t</td>
+                                                    <td>start</td>
+                                                    <td>Adresse de début de la zone mémoire</td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>size_t</td>
+                                                    <td>size</td>
+                                                    <td>Taille (longueur) de la zone mémoire</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: bool vrai si au moins un octent de la zone de mémoire spécifiée est actuellement alloué, faux sinon.</p>
+                                                                    </dd>
+                            <dt><code> void removeChunkAt(size_t index); </code></dt>
+                            <dd>
+
+                                <p>supprime le bloc de mémoire à l'adresse spécifiée</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>index</td>
+                                                    <td>Index</td>
+                                                    <td>du bloc de mémoire à supprimer dans gs_chunks.</td>
+                                                </tr>
+                                                                                                </tbody>
+                                            </table>                            </dd>
+                            <dt><code> CommandGroup createCommandGroup(Command const commands[], size_t count); </code></dt>
+                            <dd>
+
+                                <p>Crée un groupe de commandes.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>size_t</td>
+                                                    <td>count</td>
+                                                    <td>nombre de commandes dans le tableau</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: CommandGrouoe Un nouveau groupe de commandes.</p>
+                                                                    </dd>
+                            <dt><code> void showCommandMenu(CommandGroup commands); </code></dt>
+                            <dd>
+
+                                <p>Affiche un menu en console correspondant à un groupe de commandes.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>CommandGroup</td>
+                                                    <td>commands</td>
+                                                    <td>Le groupe de commandes</td>
+                                                </tr>
+                                                                                                </tbody>
+                                            </table>                            </dd>
+                            <dt><code> char *allocateString(size_t length); </code></dt>
+                            <dd>
+
+                                <p>Alloue sur le tas assez d'espaces pour stocker une chaîne de caractères</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>size_t</td>
+                                                    <td>length</td>
+                                                    <td>La longueur de la chaîne de caractères à stocker</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: char* Pointeur vers le bloc de mémoire alloué.</p>
+                                                                    </dd>
+                            <dt><code> const *getCommandFromName(CommandGroup commands, char const *commandName); </code></dt>
+                            <dd>
+
+                                <p>Obtient la commande d'un groupe ayant le nom spécifié.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>CommandGroup</td>
+                                                    <td>commands</td>
+                                                    <td>Le groupe de commandes</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: Command* Pointeur vers la commande du groupe ayant le nom spécifié, ou NULL si la commande n'a pas été trouvée.</p>
+                                                                    </dd>
+                            <dt><code> const *getCommandFromParseResult(CommandGroup commands, CommandParseResult parsedCommand); </code></dt>
+                            <dd>
+
+                                <p>Obtient la commande d'un groupe correspondant au résultat d'analyse de commande spécifié. Affiche un message d'erreur et retourne NULL si le résultat d'analyse ne correspond pas à une commande du groupe.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>CommandGroup</td>
+                                                    <td>commands</td>
+                                                    <td>Le groupe de commandes</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: Command* Pointeur vers la commande du groupe correspondant au résultat d'analyse de commande spécifié, ou NULL si aucune commande correspondante n'a été trouvée.</p>
+                                                                    </dd>
+                            <dt><code> CommandParseResult parseCommand(char *input); </code></dt>
+                            <dd>
+
+                                <p>Analyse une commande à partir d'une chaîne.</p>
+
+                                                                                    <p><strong>Retour</strong>&nbsp;: Un résultat d'analyse de commande.</p>
+                                                                    </dd>
+                            <dt><code> unsigned digitCount(int n); </code></dt>
+                            <dd>
+
+                                <p>Retourne le nombre de chiffres d'un entier.</p>
+
+                                        <table>
+                                                <caption>Parametres</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Nom</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                <tr>
+                                                    <td>int</td>
+                                                    <td>n</td>
+                                                    <td>Un entier quelconque</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>                                            <p><strong>Retour</strong>&nbsp;: unsigned Le nombre de chiffres de @p n en base 10.</p>
+                                                                    </dd>                    </dl>
+                </section>                <section>
+                    <h2>STRUCTURES</h2>
+                    <dl>                            <dt><code>Chunk</code></dt>
+                            <dd>
+
+                                    
+                                        <p>\brief Bloc de mémoire allouée </p><table>
+                                                    <caption>Composants</caption>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nom</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                            <td><em>intptr_t start</em></td>
+                                                            <td> \brief Adresse de début du bloc  </td>
+                                                    <tr>
+                                                            <td><em>size_t size</em></td>
+                                                            <td> \brief Taille (longueur) du bloc  </td>
+                                                    </tbody>
+                                                </table>
+                            </dd>                            <dt><code>Command</code></dt>
+                            <dd>
+
+                                    
+                                        <p>Commande pouvant être tapée par l'utilisateur </p><table>
+                                                    <caption>Composants</caption>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nom</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                            <td><em>const name</em></td>
+                                                            <td> Nom de la commande  </td>
+                                                    <tr>
+                                                            <td><em>const description</em></td>
+                                                            <td> Description de la commande  </td>
+                                                    <tr>
+                                                            <td><em>const hasArgument</em></td>
+                                                            <td> Vrai si la commande attend un argument (entier), faux sinon  </td>
+                                                    </tbody>
+                                                </table>
+                            </dd>                            <dt><code>CommandGroup</code></dt>
+                            <dd>
+
+                                    
+                                        <p>Groupe de commandes </p><table>
+                                                    <caption>Composants</caption>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nom</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                            <td><em>const array</em></td>
+                                                            <td> Tableau contenant les commandes  </td>
+                                                    <tr>
+                                                            <td><em>const count</em></td>
+                                                            <td> Nombre de commandes du groupe  </td>
+                                                    <tr>
+                                                            <td><em>const maxNameLength</em></td>
+                                                            <td> Longueur du nom de la commande au plus long nom parmi les commandes du groupe  </td>
+                                                    </tbody>
+                                                </table>
+                            </dd>                            <dt><code>CommandParseResult</code></dt>
+                            <dd>
+
+                                    
+                                        <p>Résultat de l'analyse d'une commande </p><table>
+                                                    <caption>Composants</caption>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nom</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                            <td><em>int argument</em></td>
+                                                            <td> Valeur de l'argument de la commande ou 0 si pas d'argument extrait  </td>
+                                                    <tr>
+                                                            <td><em>bool hasName</em></td>
+                                                            <td> Si un nom a pu être extrait  </td>
+                                                    <tr>
+                                                            <td><em>bool hasArgument</em></td>
+                                                            <td> Si un argument a pu être extrait  </td>
+                                                    </tbody>
+                                                </table>
+                            </dd>                    </dl>
+                </section>                <section>
+                    <h2>GLOBALES</h2>
+                    <dl>
+
+                                            </dl>
+                </section>    </main>
+</body>
+
+</html>
+
+
